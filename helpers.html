@@ -11,6 +11,7 @@
 <body>
     <script src="js/three.js"></script>
     <script src="js/controls/TrackBallControls.js"></script>
+    <script src="js/libs/stats.min.js"></script>
     <script>
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(57.3,
@@ -66,6 +67,19 @@
     controls.staticMoving = true;
     controls.dynamicDampingFactor = 0.3;
 
+    // stats
+    stats = new Stats();
+    document.body.appendChild(stats.dom);
+
+    window.addEventListener('resize', onWindowResize, false);
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth/window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        controls.handleResize();
+    }
+
     function render() {
         requestAnimationFrame(render);
         controls.update();
@@ -74,6 +88,7 @@
         cube.rotation.y += .01;
 
         renderer.render(scene, camera);
+        stats.update();
     }
 
     render();
