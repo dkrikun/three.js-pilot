@@ -11,6 +11,7 @@
 <body>
     <script src="js/three.js"></script>
     <script src="js/controls/TrackBallControls.js"></script>
+    <script src="js/controls/OrbitControls.js"></script>
     <script src="js/libs/stats.min.js"></script>
     <script src="js/libs/dat.gui.min.js"></script>
     <script>
@@ -59,23 +60,40 @@
     camera.lookAt(scene.position);
 
     // camera controls
-    controls = new THREE.TrackballControls(camera, renderer.domElement);
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.rotateSpeed = 1.0;
     controls.zoomSpeed = 1.2;
     controls.panSpeed = 0.8;
-    controls.noZoom = false;
-    controls.noPan = false;
-    controls.staticMoving = true;
-    controls.dynamicDampingFactor = 0.3;
+    controls.enableDamping = true;
 
     // stats
     stats = new Stats();
     document.body.appendChild(stats.dom);
 
+    // gui
     var gui = new dat.GUI();
-    gui.add(controls, "rotateSpeed").min(0).max(5).step(1);
-    gui.add(controls, "zoomSpeed").min(0).max(5).step(1);
-    gui.add(controls, "panSpeed").min(0).max(5).step(1);
+    var f1 = gui.addFolder('Camera Controls');
+    f1.add(controls, 'rotateSpeed').min(0).max(5);
+    f1.add(controls, 'zoomSpeed').min(0).max(5);
+    f1.add(controls, 'panSpeed').min(0).max(5);
+    f1.add(controls, 'enableDamping');
+    f1.add(controls, 'dampingFactor').min(0).max(2);
+
+    var grid_axes = {
+        showGrid: true,
+        showAxes: true,
+    };
+
+    var update_grid_axes = function() {
+        grid.visible = grid_axes.showGrid;
+        x_arrow.visible = grid_axes.showAxes;
+        y_arrow.visible = grid_axes.showAxes;
+        z_arrow.visible = grid_axes.showAxes;
+    }
+
+    var f2 = gui.addFolder('Grid/Axes');
+    f2.add(grid_axes, 'showGrid').onChange(update_grid_axes);
+    f2.add(grid_axes, 'showAxes').onChange(update_grid_axes);
 
     window.addEventListener('resize', onWindowResize, false);
 
